@@ -5,46 +5,50 @@ require_once 'models/product.php';
 
 class CategoryController {
 
-    public function index() {/*
+    public function index() {
         Utils::isAdmin();
         $category = new Category();
-        $categories = $category->getAll();*/
+        $categories = $category->getAll();
 
         require_once 'views/category/index.php';
     }
 
-    public function ver() {
+    public function see() {
         if (isset($_GET['id'])) {
+            
             $id = $_GET['id'];
 
             // Conseguir categoria
-            $categoria = new Categoria();
-            $categoria->setId($id);
-            $categoria = $categoria->getOne();
+            $category = new Category();
+            $category->setId($id);
+            $category = $category->getOne();
+            
+//            var_dump($category);
+//            die();
 
             // Conseguir productos;
-            $producto = new Producto();
-            $producto->setCategoria_id($id);
-            $productos = $producto->getAllCategory();
+            $product = new Product();
+            $product->setId_category($id);
+            $products = $product->getAllProductsCategory();
         }
-
-        require_once 'views/category/ver.php';
+        require_once 'views/category/see.php';
     }
 
-    public function crear() {
+    public function create() {
         Utils::isAdmin();
-        require_once 'views/categoria/crear.php';
+        require_once 'views/category/create.php';
     }
 
     public function save() {
         Utils::isAdmin();
-        if (isset($_POST) && isset($_POST['nombre'])) {
+        
+        if (isset($_POST) && isset($_POST['name'])) {
             // Guardar la categoria en bd
-            $categoria = new Categoria();
-            $categoria->setNombre($_POST['nombre']);
-            $save = $categoria->save();
+            $category = new Category();
+            $category->setName($_POST['name']);
+            $save = $category->save();
+            
         }
-        header("Location:" . base_url . "categoria/index");
+        header("Location:". base_url . "category/index");
     }
-
 }

@@ -5,124 +5,191 @@ require_once 'models/product.php';
 class ProductController {
 
     public function index() {
-        /*
+
         $product = new Product();
         $products = $product->getRandom(6);
-*/
+
+
+
         // Renderizar vista
         require_once 'views/product/highlights.php';
     }
-/*
-    public function ver() {
+
+    public function see() {
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
 
-            $producto = new Producto();
-            $producto->setId($id);
+            $product = new Product();
+            $product->setId($id);
 
-            $product = $producto->getOne();
+            $product= $product->getOne();
         }
-        require_once 'views/producto/ver.php';
+        require_once 'views/product/see.php';
     }
 
     public function gestion() {
         Utils::isAdmin();
 
-        $producto = new Producto();
-        $productos = $producto->getAll();
+        $product = new Product();
+        $products = $product->getAll();
 
-        require_once 'views/producto/gestion.php';
+        require_once 'views/product/gestion.php';
     }
 
     public function create() {
         Utils::isAdmin();
-        require_once 'views/producto/crear.php';
+        require_once 'views/product/create.php';
     }
 
     public function save() {
         Utils::isAdmin();
         if (isset($_POST)) {
-            $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : false;
-            $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : false;
-            $precio = isset($_POST['precio']) ? $_POST['precio'] : false;
-            $stock = isset($_POST['stock']) ? $_POST['stock'] : false;
-            $categoria = isset($_POST['categoria']) ? $_POST['categoria'] : false;
-            // $imagen = isset($_POST['imagen']) ? $_POST['imagen'] : false;
 
-            if ($nombre && $descripcion && $precio && $stock && $categoria) {
-                $producto = new Producto();
-                $producto->setNombre($nombre);
-                $producto->setDescripcion($descripcion);
-                $producto->setPrecio($precio);
-                $producto->setStock($stock);
-                $producto->setCategoria_id($categoria);
+
+            $name = isset($_POST['name']) ? $_POST['name'] : false;
+            $description = isset($_POST['description']) ? $_POST['description'] : false;
+            $price = isset($_POST['price']) ? $_POST['price'] : false;
+            $stock = isset($_POST['stock']) ? $_POST['stock'] : false;
+            $category = isset($_POST['category']) ? $_POST['category'] : false;
+            $image = isset($_POST['image']) ? $_POST['image'] : false;
+
+            $errors = array();
+
+            // Validar datos antes de guardarlos en la db
+            //----------------------------------------preg_match().- comprubea si algun caract?r del string no es un n?mero
+            // Names validation
+            if (!empty($name) && !is_numeric($name) && !preg_match("/[0-9]/", $name)) {
+                $name_validated = true;
+            } else {
+                $name_validated = false;
+                $errors['name'] = "Name is not valid";
+            }
+
+            // Last names validation
+            if (!empty($description)) {
+                $description_validated = true;
+            } else {
+                $description_validated = false;
+                $errors['description'] = "Description not valid";
+            }
+
+            // Email validation
+            if (!empty($price) && is_numeric($price)) {
+                $price_validated = true;
+            } else {
+                $price_validated = false;
+                $errors['email'] = "Email is empty";
+            }
+
+
+            $save_user = false;
+
+            // Cuando no exista errores, se inserta en la tabla correspondiente de la db
+            if (count($errors) == 0) {
+
+                $save_user = true;
+
+
+                $category = intval($category);
+
+                $product = new Product();
+                $product->setName($name);
+                $product->setDescription($description);
+                $product->setPrice($price);
+                $product->setStock($stock);
+                $product->setId_category($category);
 
                 // Guardar la imagen
-                if (isset($_FILES['imagen'])) {
-                    $file = $_FILES['imagen'];
+                if (isset($_FILES['image'])) {//-----------puede estar $_FILES['image'] tanto como $_FILES
+                    $file = $_FILES['image'];
                     $filename = $file['name'];
                     $mimetype = $file['type'];
 
+//                var_dump($file);
+//                die();
+
                     if ($mimetype == "image/jpg" || $mimetype == 'image/jpeg' || $mimetype == 'image/png' || $mimetype == 'image/gif') {
 
-                        if (!is_dir('uploads/images')) {
-                            mkdir('uploads/images', 0777, true);
-                        }
+//                    var_dump($filename);
+//                    die();
 
-                        $producto->setImagen($filename);
-                        move_uploaded_file($file['tmp_name'], 'uploads/images/' . $filename);
+                        if (!is_dir('uploads/images')) //---------si no existe directorio uploads/imafes, se lo crea.
+                            mkdir('uploads/images', 0777, true); //-------se crea directorio con permiso, 0777 y true para directorios recursivos
                     }
+
+                    move_uploaded_file($file['tmp_name'], 'uploads/images/' . $filename);
+                    $product->setImage($filename);
                 }
 
                 if (isset($_GET['id'])) {
                     $id = $_GET['id'];
-                    $producto->setId($id);
+                    $product->setId($id);
 
-                    $save = $producto->edit();
+                    $save = $product->edit();
                 } else {
-                    $save = $producto->save();
+                    $save = $product->save();
                 }
+
 
                 if ($save) {
-                    $_SESSION['producto'] = "complete";
+                    $_SESSION['product'] = "complete";
                 } else {
-                    $_SESSION['producto'] = "failed";
+                    $_SESSION['product'] = "failed";
                 }
-            } else {
-                $_SESSION['producto'] = "failed";
             }
+
+            /* if (isset($_GET['id'])) {
+              $id = $_GET['id'];
+              $product->setId($id);
+
+              $save = $product->edit();
+              } else {
+              $save = $product->save();
+              } */
         } else {
-            $_SESSION['producto'] = "failed";
+            $_SESSION['product'] = "failed";
         }
-        header('Location:' . base_url . 'producto/gestion');
+        header('Location:' . base_url . 'product/gestion');
     }
 
-    public function editar() {
+    public function edit() {
         Utils::isAdmin();
+//        var_dump($_GET);
+//        die();
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
             $edit = true;
 
-            $producto = new Producto();
-            $producto->setId($id);
+            $product = new Product();
+            $product->setId($id);
 
-            $pro = $producto->getOne();
+            $pro = $product->getOne();
+            $save = $product->edit();
 
-            require_once 'views/producto/crear.php';
+            $result = false;
+            if ($save) {
+                $result = true;
+            }
+
+            require_once 'views/product/create.php';
         } else {
-            header('Location:' . base_url . 'producto/gestion');
+            header('Location:' . base_url . 'product/gestion');
         }
     }
 
-    public function eliminar() {
+    public function delete() {
         Utils::isAdmin();
+
+//        var_dump($_GET);
+//        die();
 
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-            $producto = new Producto();
-            $producto->setId($id);
+            $product = new Product();
+            $product->setId($id);
 
-            $delete = $producto->delete();
+            $delete = $product->delete();
+
             if ($delete) {
                 $_SESSION['delete'] = 'complete';
             } else {
@@ -132,6 +199,7 @@ class ProductController {
             $_SESSION['delete'] = 'failed';
         }
 
-        header('Location:' . base_url . 'producto/gestion');
-    }*/
+        header('Location:' . base_url . 'product/gestion');
+    }
+
 }

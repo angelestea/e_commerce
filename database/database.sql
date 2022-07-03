@@ -20,10 +20,10 @@ name          varchar(100) not null,
 CONSTRAINT pk_categories PRIMARY KEY(id) 
 )ENGINE=InnoDb;
 
-INSERT INTO categories VALUES(null, 'Manga corta');
-INSERT INTO categories VALUES(null, 'Tirantes');
-INSERT INTO categories VALUES(null, 'Manga larga');
-INSERT INTO categories VALUES(null, 'Sudaderas');
+INSERT INTO categories VALUES(null, 'Trucker');
+INSERT INTO categories VALUES(null, 'Classic');
+INSERT INTO categories VALUES(null, 'Boina');
+INSERT INTO categories VALUES(null, 'Modern');
 
 CREATE TABLE products(
 id              int(255) auto_increment not null,
@@ -56,9 +56,9 @@ CONSTRAINT fk_pedido_usuario FOREIGN KEY(id_user) REFERENCES users(id)ON DELETE 
 
 CREATE TABLE order_lines(
 id              int(255) auto_increment not null,
-id_order       int(255) not null,
-id_product     int(255) not null,
-unidades        int(255) not null,
+id_order       int(255) NOT NULL,
+id_product     int(255) NOT NULL,
+unities        int(255) NOT NULL,
 CONSTRAINT pk_order_lines PRIMARY KEY(id),
 CONSTRAINT fk_order_line FOREIGN KEY(id_order) REFERENCES orders(id) ON DELETE CASCADE, 
 CONSTRAINT fk_product_line FOREIGN KEY(id_product) REFERENCES products(id) ON DELETE CASCADE

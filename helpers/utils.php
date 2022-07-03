@@ -10,15 +10,15 @@ class Utils {
 
         return $name;
     }
-/*
+
     public static function isAdmin() {
         if (!isset($_SESSION['admin'])) {
-            header("Location:" . base_url);
+            header("Location:".base_url);
         } else {
             return true;
         }
     }
-    */
+    
     /*
     public static function isIdentity() {
         if (!isset($_SESSION['identity'])) {
@@ -28,28 +28,28 @@ class Utils {
         }
     }*/
 
-    /*public static function showCategorias() {
-        require_once 'models/categoria.php';
-        $categoria = new Categoria();
-        $categorias = $categoria->getAll();
-        return $categorias;
-    }*/
-/*
-    public static function statsCarrito() {
-        $stats = array(
-            'count' => 0,
+    public static function showCategories() {
+        require_once 'models/category.php';
+        $category = new Category();
+        $categories = $category->getAll();
+        return $categories;
+    }
+
+    public static function carStatus() {
+        $status = array(
+            'products' => 0,
             'total' => 0
         );
 
-        if (isset($_SESSION['carrito'])) {
-            $stats['count'] = count($_SESSION['carrito']);
+        if (isset($_SESSION['car'])) {
+            $status['products'] = count($_SESSION['car']);
 
-            foreach ($_SESSION['carrito'] as $producto) {
-                $stats['total'] += $producto['precio'] * $producto['unidades'];
+            foreach ($_SESSION['car'] as $product) {
+                $status['total'] += $product['price'] * $product['unities'];
             }
         }
 
-        return $stats;
+        return $status;
     }
 
     public static function showStatus($status) {
@@ -67,5 +67,4 @@ class Utils {
 
         return $value;
     }
-*/
 }
