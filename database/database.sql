@@ -13,11 +13,23 @@ CONSTRAINT pk_users PRIMARY KEY(id),
 CONSTRAINT uq_email UNIQUE(email)  
 )ENGINE=InnoDb;
 
+CREATE TABLE cars(
+id              int(255) auto_increment NOT NULL,
+id_user         int(255) NOT NULL,
+id_product      int(255) NOT NULL,
+image           varchar(255) NOT NULL,
+name            varchar(255) NOT NULL,
+price           float NOT NULL,
+unities         int(255) NOT NULL,
+CONSTRAINT pk_cars PRIMARY KEY(id),
+CONSTRAINT fk_id_user FOREIGN KEY(id_user) REFERENCES users(id),
+CONSTRAINT fk_id_product FOREIGN KEY(id_product) REFERENCES products(id) 
+)ENGINE=InnoDb;
 
 CREATE TABLE categories(
 id              int(255) auto_increment not null,
 name          varchar(100) not null,
-CONSTRAINT pk_categories PRIMARY KEY(id) 
+CONSTRAINT pk_categories PRIMARY KEY(id)
 )ENGINE=InnoDb;
 
 INSERT INTO categories VALUES(null, 'Trucker');

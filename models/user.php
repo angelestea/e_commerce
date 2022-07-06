@@ -83,6 +83,7 @@ class User {
     }
 
     public function login() {
+        
         $result = false;
         $email = $this->email;
         $password = $this->password;

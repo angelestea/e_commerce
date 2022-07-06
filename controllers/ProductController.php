@@ -6,6 +6,10 @@ class ProductController {
 
     public function index() {
 
+        if(isset($_SESSION['re_login'])){
+            unset($_SESSION['re_login']);
+        }
+        
         $product = new Product();
         $products = $product->getRandom(6);
 

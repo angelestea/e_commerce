@@ -8,6 +8,10 @@ class UserController {
         echo "User controller";
     }
 
+    public function loginRequired(){
+        require_once 'views/user/login.php';
+    }
+    
     public function register() {
         require_once 'views/user/register.php';
     }
@@ -114,6 +118,11 @@ class UserController {
                 if ($identity->role == 'admin') {
                     $_SESSION['admin'] = true;
                 }
+                
+                if(isset($_SESSION['re_login'])){
+                    unset($_SESSION['re_login']);
+                }
+                
             } else {
                 $_SESSION['error_login'] = 'Failed identification';
             }
@@ -128,6 +137,12 @@ class UserController {
 
         if (isset($_SESSION['admin'])) {
             unset($_SESSION['admin']);
+        }
+        
+//        var_dump($_SESSION['car']);
+//        die();
+        if(isset($_SESSION['car'])){
+            unset($_SESSION['car']);
         }
 
         header("Location:" . base_url);

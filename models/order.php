@@ -1,5 +1,7 @@
 <?php
 
+require_once 'models/car.php';
+
 class Order {
 
     private $id;
@@ -106,7 +108,7 @@ class Order {
 
 //        echo $sql;
 //        die();
-                
+
         $order = $this->db->query($sql);
 
 //        echo $this->db->error;
@@ -115,10 +117,12 @@ class Order {
     }
 
     public function getAllByUser() {
-        $sql = "SELECT o.* FROM order o "
+        $sql = "SELECT o.* FROM orders o "
                 . "WHERE o.id_user = {$this->getId_user()} ORDER BY id DESC";
 
         $order = $this->db->query($sql);
+
+//        echo $sql; die();
 
         return $order;
     }
@@ -128,7 +132,7 @@ class Order {
         $sql = "SELECT pr.*, ol.unities FROM products pr "
                 . "INNER JOIN order_lines ol ON pr.id = ol.id_product "
                 . "WHERE ol.id_order={$id}";
-                
+
 //      echo $sql;
 //      die();
         $products = $this->db->query($sql);
@@ -151,22 +155,44 @@ class Order {
         $sql = "SELECT LAST_INSERT_ID() as 'order';";
         $query = $this->db->query($sql);
         $id_order = $query->fetch_object()->order;
-        
+
 //        var_dump($id_order);
 //        die();
 
-        foreach ($_SESSION['car'] as $element) {
-            $product = $element['product'];
+        if (isset($_SESSION['car'])) {
 
-            $insert = "INSERT INTO order_lines VALUES(NULL, {$id_order}, {$product->id}, {$element['unities']})";
-            $save = $this->db->query($insert);
+            foreach ($_SESSION['car'] as $element) {
+                $product = $element['product'];
+
+                $insert = "INSERT INTO order_lines VALUES(NULL, {$id_order}, {$product->id}, {$element['unities']})";
+                $save = $this->db->query($insert);
 
 //            var_dump($product);
 //            var_dump($insert);
 //            echo $this->db->error;
 //            die();
-        }
+            } 
+        }else {
 
+                $car = new Car();
+                
+                $car->setId_user($_SESSION['identity']->id);
+                
+                $order = $car->search();
+                
+                $result = false;
+                if($order){
+                    $save = $this->save();
+                    if($save){
+                        $result = true;
+                        return $result;
+                    }
+                    
+                }
+                
+//                var_dump($order);
+//                die();
+            }
         $result = false;
         if ($save) {
             $result = true;
@@ -175,7 +201,7 @@ class Order {
     }
 
     public function edit() {
-        $sql = "UPDATE pedidos SET estado='{$this->getEstado()}' ";
+        $sql = "UPDATE orders SET state='{$this->getState()}' ";
         $sql .= " WHERE id={$this->getId()};";
 
         $save = $this->db->query($sql);

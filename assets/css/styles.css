@@ -11,6 +11,11 @@ body{
     min-height: 733px;
 }
 
+.text__center{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
 a{
     color: rgb(7, 7, 7);
     text-decoration: none;
@@ -274,15 +279,27 @@ input[type="submit"]:hover{
     border:3px solid rgb(14, 14, 14);
 }
 
+.button__remove,
 .button__red{
-    background: red;
-    border:3px solid red;
+    background: rgb(14,14,14);
+    color: rgb(252, 161, 3) !important;
+    border:3px solid rgb(14, 14, 14);
+}
+
+.button__remove:hover,
+.button__red:hover{
+    background: rgb(14,14,14);
+    border:3px solid rgb(14, 14, 14);
     color: white !important;
 }
 
-.button__red:hover{
-    color: rgb(14,14,14);
+.button__remove{
+    display: flex;
+    justify-content: center;
+    width: 50px !important;
+    margin:0 auto;
 }
+
 
 /*Central content*/
 
@@ -422,6 +439,24 @@ td{
     font-weight: bold;
     color: rgb(7, 7 ,7);
     margin-bottom: 10px;
+}
+
+
+.operators_container{
+    display: flex;
+    flex-direction: row;        
+}
+
+.up__down{
+    color: rgb(252, 161, 3) !important;
+    padding:7px;
+    margin: 0 auto;
+    transition: all 0.300s;    
+}
+
+.up__down:hover{
+    color: greenyellow;
+    text-shadow: 1px 1px gray;
 }
 
 /*Footer*/

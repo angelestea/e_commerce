@@ -14,6 +14,10 @@ class CategoryController {
     }
 
     public function see() {
+        if(isset($_SESSION['re_login'])){
+            unset($_SESSION['re_login']);
+        }
+        
         if (isset($_GET['id'])) {
             
             $id = $_GET['id'];

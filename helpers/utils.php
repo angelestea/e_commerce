@@ -19,14 +19,22 @@ class Utils {
         }
     }
     
-    /*
     public static function isIdentity() {
         if (!isset($_SESSION['identity'])) {
             header("Location:" . base_url);
         } else {
             return true;
         }
-    }*/
+    }
+    
+    public static function isLogin(){
+        if (!isset($_SESSION['identity'])) {
+            $_SESSION['re_login'] = true;
+            header("Location:" . base_url.'user/loginRequired');
+        } else {
+            return true;
+        }
+    }
 
     public static function showCategories() {
         require_once 'models/category.php';
@@ -53,18 +61,29 @@ class Utils {
     }
 
     public static function showStatus($status) {
-        $value = 'Pendiente';
+        $value = 'earring';
 
         if ($status == 'confirm') {
-            $value = 'Pendiente';
+            $value = 'earring';
         } elseif ($status == 'preparation') {
-            $value = 'En preparación';
+            $value = 'in preparation';
         } elseif ($status == 'ready') {
-            $value = 'Preparado para enviar';
+            $value = 'preparated to send';
         } elseif ($status = 'sended') {
-            $value = 'Enviado';
+            $value = 'sended';
         }
 
         return $value;
+    }
+    
+    public static function showDataBase($id_user){
+        $db = Database::connect();
+        $sql = "SELECT * FROM cars WHERE id_user={$id_user}";
+                                                                        
+        $data = $db->query($sql);
+        
+        if($data){
+            return $data;
+        }   
     }
 }
