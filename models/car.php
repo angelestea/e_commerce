@@ -103,14 +103,19 @@ class Car {
     function pre__order() {
         //$sql_delete = "DELETE FROM cars WHERE id_user={$this->getId_user()}";
         
-        $this->delete__garbage();
+        //$this->delete__garbage();
         
         $sql_save = "INSERT INTO cars VALUES(NULL,{$this->getId_user()}, '{$this->getId_product()}','{$this->getImage()}', '{$this->getName()}', {$this->getPrice()}, {$this->getUnities()});";
 
         //$save = $this->db->query($sql_delete);
-        
+        //echo $sql_save;
+       
         $save = $this->db->query($sql_save);
 
+//        var_dump($save);
+//        die();
+        
+        
         $sql_duplicate = "SELECT COUNT(id_user) as 'rows' FROM cars WHERE id_product={$this->getId_product()};";
         
         $duplicate = $this->db->query($sql_duplicate);

@@ -94,6 +94,13 @@ class Product {
         return $products;
     }
 
+    public function getProductByOrderLines(){
+        $consult = "SELECT * FROM products p INNER JOIN order_lines ol ON ol.id_product = p.id WHERE p.id={$this->getId()}";
+        //echo $consult;
+        $product = $this->db->query($consult);
+        return $product;
+    }
+    
     public function getAllProductsCategory() {
         $sql = "SELECT p.*, c.name AS 'category name' FROM products p "
                 . "INNER JOIN categories c ON c.id = p.id_category "
@@ -109,8 +116,12 @@ class Product {
     }
 
     public function getOne() {
-        $producto = $this->db->query("SELECT * FROM products WHERE id = {$this->getId()}");
-        return $producto->fetch_object();
+        $consult = "SELECT * FROM products WHERE id = {$this->getId()}";
+        $product = $this->db->query($consult);
+//        echo $consult;
+//        var_dump($product);
+//        die();
+        return $product->fetch_object();
     }
 
     public function save() {
@@ -153,5 +164,4 @@ class Product {
         }
         return $result;
     }
-
 }

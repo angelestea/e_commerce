@@ -3,7 +3,7 @@
 <table>
 
     <tr>
-        <?php var_dump($dataValue->num_rows); ?>
+        <?php //var_dump($dataValue->num_rows); ?>
         <?php if (isset($_SESSION['car']) || isset($dataValue)): ?>
             <th>Get out of car</th>
         <?php endif; ?>
@@ -81,11 +81,11 @@
     elseif (isset($dataValue) || $dataValue->num_rows >= 1 || count($_SESSION['car']) > 0):
 //        var_dump(count($_SESSION['car']));
 //        die();
-        echo "Ok 1!";
+        //echo "Ok 1!";
         $count = 0;
         $totalPrice = 0;
         $totalUnities = 0;
-        var_dump($dataValue->num_rows);
+        //var_dump($dataValue->num_rows);
         //die();
         while ($product = $dataValue->fetch_object()):
             //var_dump($product);
@@ -125,7 +125,7 @@
                     <div class='operators_container'>
                         <a href='<?= base_url ?>car/up&id_product=<?= $product->id_product ?>&data=<?= true ?>&product_name=<?= $product->name ?>&product_unities=<?= $product->unities ?>&product_price=<?= $product->price ?>&image=<?=$product->image?>' class='up__down'>+</a>
                         <?php if ($product->unities > 1): ?>
-                            <a href='<?= base_url ?>car/down&id_product=<?= $product->id_product ?>&data=<?= true ?>&product_name=<?= $product->name ?>&product_unities=<?= $product->unities ?>&product_price=<?= $product->price ?>' class='up__down'>-</a>
+                            <a href='<?= base_url ?>car/down&id_product=<?= $product->id_product ?>&data=<?= true ?>&product_name=<?= $product->name ?>&product_unities=<?= $product->unities ?>&product_price=<?= $product->price ?>&image=<?=$product->image?>' class='up__down'>-</a>
                         <?php elseif ($product->unities == 1): ?>
                             <a href="<?= base_url ?>car/remove&index=<?= $product->id_product ?>" class='up__down'>-</a>
                         <?php endif; ?>

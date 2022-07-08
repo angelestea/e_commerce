@@ -127,28 +127,61 @@ class Order {
         return $order;
     }
 
-    public function getProductsByOrder($id) {
+    public function getProductsByUser($id_user) {
 
-        $sql = "SELECT pr.*, ol.unities FROM products pr "
-                . "INNER JOIN order_lines ol ON pr.id = ol.id_product "
-                . "WHERE ol.id_order={$id}";
+        $sql = "SELECT pr.*, c.unities FROM products pr "
+                . "INNER JOIN cars c ON pr.id = c.id_product "
+                . "WHERE c.id_user={$id_user};";
 
 //      echo $sql;
 //      die();
         $products = $this->db->query($sql);
+        //echo $sql;
+        //var_dump($products);
+        //die();
 
         return $products;
+    }
+    
+    public function getProductInOrderLines(){
+        $sql = "SELECT * FROM order_lines WHERE id_order={$this->id}";
+        //echo $sql;
+        $products = $this->db->query($sql);
+        
+        if($products){
+            return $products;
+        }
+    }
+
+    public function getOderByIdOrder($id_order) {
+        $sql = "SELECT * FROM orders WHERE id={$id_order}";
+
+        $order = $this->db->query($sql)->fetch_object();
+
+//        var_dump($order);
+//        die();
+        return $order;
     }
 
     public function save() {
         $sql = "INSERT INTO orders VALUES(NULL, {$this->getId_user()}, '{$this->getProvince()}', '{$this->getLocation()}', '{$this->getAddress()}', {$this->getPrice()}, 'confirm', CURDATE(), CURTIME());";
         $save = $this->db->query($sql);
 
+//        echo $sql;
+//        var_dump($save);
+//        die();
+
         $result = false;
         if ($save) {
-            $result = true;
+            $result = $save;
         }
         return $result;
+    }
+
+    public function delete_garbage($state, $date, $hour) {
+        $sql = "DELETE FROM orders WHERE province='{$this->getProvince()}' AND location='{$this->getLocation()}' AND address='{$this->getAddress()}' AND price={$this->getPrice()} AND state='{$state}' AND date='{$date}' AND hour='{$hour}');";
+        echo $sql;
+        die();
     }
 
     public function save_line() {
@@ -158,6 +191,8 @@ class Order {
 
 //        var_dump($id_order);
 //        die();
+
+        $result = true;
 
         if (isset($_SESSION['car'])) {
 
@@ -171,31 +206,37 @@ class Order {
 //            var_dump($insert);
 //            echo $this->db->error;
 //            die();
-            } 
-        }else {
+            }
+        } else {
 
-                $car = new Car();
-                
-                $car->setId_user($_SESSION['identity']->id);
-                
-                $order = $car->search();
-                
-                $result = false;
-                if($order){
-                    $save = $this->save();
-                    if($save){
-                        $result = true;
-                        return $result;
-                    }
-                    
+            $car = new Car();
+            $id_user = $_SESSION['identity']->id;
+            $car->setId_user($id_user);
+
+//                $order_line = "SELECT * FROM orders WHERE id_user={$id_user}";
+//                $order_line = $this->db->query($order_line);
+//                
+//                var_dump($order_line);
+//                die();
+
+            $order = $car->search();
+            var_dump($order);
+            //die();                
+
+
+            while ($ord = $order->fetch_object()):
+                $sql = "INSERT INTO order_lines VALUES(NULL, {$id_order}, {$ord->id_product}, {$ord->unities});";
+                //echo $sql;
+
+                $detail_inserted = $this->db->query($sql);
+
+                if (!$detail_inserted) {
+                    $result = false;
                 }
                 
-//                var_dump($order);
+//                var_dump($detail_inserted);
 //                die();
-            }
-        $result = false;
-        if ($save) {
-            $result = true;
+            endwhile;
         }
         return $result;
     }

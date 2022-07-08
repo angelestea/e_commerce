@@ -13,8 +13,6 @@ class ProductController {
         $product = new Product();
         $products = $product->getRandom(6);
 
-
-
         // Renderizar vista
         require_once 'views/product/highlights.php';
     }
@@ -107,7 +105,7 @@ class ProductController {
                 if (isset($_FILES['image'])) {//-----------puede estar $_FILES['image'] tanto como $_FILES
                     $file = $_FILES['image'];
                     $filename = $file['name'];
-                    $mimetype = $file['type'];
+                    $mimetype = $file['type'];//---------tipo de formato de la imagen
 
 //                var_dump($file);
 //                die();
@@ -141,15 +139,6 @@ class ProductController {
                     $_SESSION['product'] = "failed";
                 }
             }
-
-            /* if (isset($_GET['id'])) {
-              $id = $_GET['id'];
-              $product->setId($id);
-
-              $save = $product->edit();
-              } else {
-              $save = $product->save();
-              } */
         } else {
             $_SESSION['product'] = "failed";
         }
@@ -158,8 +147,7 @@ class ProductController {
 
     public function edit() {
         Utils::isAdmin();
-//        var_dump($_GET);
-//        die();
+
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
             $edit = true;
@@ -184,9 +172,6 @@ class ProductController {
     public function delete() {
         Utils::isAdmin();
 
-//        var_dump($_GET);
-//        die();
-
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
             $product = new Product();
@@ -205,5 +190,4 @@ class ProductController {
 
         header('Location:' . base_url . 'product/gestion');
     }
-
 }

@@ -5,14 +5,19 @@
         After you cancel the total value of the order in this account: 57685465464684, this one will be processed and sended  you to your address.
     </p>
     <br/>
-    <?php if (isset($order)):
-     var_dump($order);
+    <?php 
+    //var_dump($order);
+
+    if (isset($order)):
+     //var_dump($order);
+     //var_dump($products == $products);
+    //die();
         ?>
         <h3>Order data:</h3></br>
 
         <pre>
-                Order number: <?= $order->id ?> </br>
-                Total to pay: <?= $order->price ?> $ </br>
+                Order number: <?= $id_order ?> </br>
+                Total to pay: <?= $price_products_in_car ?> $ </br>
                 Products: 
         </pre>
 
@@ -24,8 +29,9 @@
                     <th>Price</th>
                     <th>Unities</th>
                 </tr>
-                <?php while ($product = $products->fetch_object()):
-                    ?>
+                <?php if(isset($products)):
+                     while ($product = $products->fetch_object()):?>
+                    
                             <tr>
                             <td>
                             <?php if ($product->image != null): ?>
@@ -44,7 +50,10 @@
                             <?= $product->unities ?>
                             </td>
                         </tr>
-                <?php endwhile; ?>
+                    <?php endwhile; 
+                else:
+                        
+                endif; ?>        
                 </table>
     <?php endif; ?>
 <?php elseif (isset($_SESSION['order']) && $_SESSION['order'] != 'completed'): ?>

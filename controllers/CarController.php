@@ -226,6 +226,7 @@ class CarController {
             $product_name = $_GET['product_name'];
             $product_price = (float)$_GET['product_price'];
             $product_unities = $_GET['product_unities']-1;
+            $product_image = $_GET['image'];
 
 //            var_dump($product_price);
 //            die();
@@ -237,6 +238,7 @@ class CarController {
             $car->setName($product_name);
             $car->setPrice($product_price);
             $car->setUnities($product_unities);
+            $car->setImage($product_image);
 
             //var_dump($car->getUnities());
             $sum = $car->delete__or__add__one__unit();
@@ -269,9 +271,13 @@ class CarController {
                 $car->setPrice($product_price);
                 $car->setUnities($product_unities);
 
-                var_dump($car->getUnities());
+                //var_dump($car->getUnities());
 
                 $save = $car->pre__order();
+                
+                var_dump($save);
+                //die();
+                
             }
             unset($_SESSION['car']);
             //var_dump($count);

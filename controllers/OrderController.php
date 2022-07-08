@@ -1,6 +1,8 @@
 <?php
 
 require_once 'models/order.php';
+require_once 'models/car.php';
+require_once 'models/product.php';
 
 class OrderController {
 
@@ -17,7 +19,7 @@ class OrderController {
 //        die();
         
         $totalPrice = isset($_SESSION['totalPrice']) ? (float)$_SESSION['totalPrice'] : false;
-        var_dump($totalPrice);
+        //var_dump($totalPrice);
         
         if (isset($_SESSION['identity']) && !$totalPrice) {
             echo "Ok 1!";
@@ -101,7 +103,10 @@ class OrderController {
 //                die();
                 // Guardar linea pedido
                 $save_line = $order->save_line();
-
+                
+                //$delete_garbage = $order->delete_garbage(date(),time());
+                
+                
                 if ($save && $save_line) {
                     $_SESSION['order'] = "completed";
                 } else {
@@ -128,7 +133,7 @@ class OrderController {
 
             // Validar datos antes de guardarlos en la db
             //----------------------------------------preg_match().- comprubea si algun caract?r del string no es un n?mero
-            // Names validation            
+            // Names validation
             if (!empty($id_user) && is_numeric($id_user)) {
                 $id_user_validated = true;
             } else {
@@ -170,7 +175,7 @@ class OrderController {
             $save_order = false;
 
             //var_dump($save_order);
-            //var_dump($errors);
+//            var_dump($errors);
 //            die();
 
             if (count($errors) == 0) {
@@ -192,12 +197,22 @@ class OrderController {
 
 //                var_dump($save);
 //                die();
-                // Guardar linea pedido
+                //Guardar linea pedido
                 $save_line = $order->save_line();
 
 //                var_dump($save_line);
 //                die();
-                
+//                $state_last_inserted = "SELECT state FROM orders WHERE id_user={$order->getId_user()} AND province='{$order->getProvince()}' AND location='{$order->getLocation()}' AND address='{$order->getAddress()}' AND price={$order->getPrice()};";
+//                
+//                $db = Database::connect();
+//                
+//                $state = $db->query($state_last_inserted)->fetch_object()->state;
+//                echo $state_last_inserted;
+//                var_dump($state);
+//                die();                
+//                
+//                $delete_garbage = $order->delete_garbage($state,date(),time());
+                                
                 if ($save && $save_line) {
                     $_SESSION['order'] = "completed";
                 } else {
@@ -206,6 +221,8 @@ class OrderController {
             } else {
                 $_SESSION['order'] = "failed";
             }
+//            echo "Ok add";
+//            die();
             header("Location:".base_url.'order/confirmed');
         }else {
             // Redigir al index
@@ -215,18 +232,37 @@ class OrderController {
 
     public function confirmed() {
         if (isset($_SESSION['identity'])) {
+            
             $identity = $_SESSION['identity'];
             $order = new Order();
             $order->setId_user($identity->id);
-
-            $order = $order->getOneByUser();
-
-            $order_products = new Order();
-            $products = $order_products->getProductsByOrder($order->id);
+            $id_user = $order->getId_user();
+            $db = Database::connect();
+            $sql = "SELECT SUM(price*unities) as 'total_price' FROM cars WHERE id_user={$id_user};";
+            $price_products_in_car = $db->query($sql);
+            $price_products_in_car = $price_products_in_car->fetch_object()->total_price;
+            
+            $sql_id_order = "SELECT id FROM orders WHERE id_user={$id_user} ORDER BY id DESC LIMIT 1;";
+            //echo $sql_id_order;
+            $id_order = (int)$db->query($sql_id_order)->fetch_object()->id;
+//            var_dump($id_order);
+//            die();
+            
+            //$id_order = (int)$id_order;
+            
+//            echo $sql_id_order;
+//            var_dump($id_order);
+//            die();
+//            
+//            var_dump($price_products_in_car);
+            //die();
+            $products = $order->getProductsByUser($id_user);
 //            var_dump($products);
 //            die();
+            require_once 'views/order/confirmed.php';
+        }else{
+            require_once 'views/order/confirmed.php';
         }
-        require_once 'views/order/confirmed.php';
     }
 
     public function my_orders() {
@@ -245,17 +281,38 @@ class OrderController {
         Utils::isIdentity();
 
         if (isset($_GET['id'])) {
-            $id = $_GET['id'];
+            $id_order = $_GET['id'];
 
-            // Sacar el pedido
+            // Sacar orden
             $order = new Order();
-            $order->setId($id);
-            $order = $order->getOne();
+            $order->setId($id_order);
+            $products = $order->getProductInOrderLines($id_order);
+            
+            $order = $order->getOderByIdOrder($id_order);
+            
 
-            // Sacar los poductos
-            $order_products = new Order();
-            $products = $order_products->getProductsByOrder($id);
-
+            
+//            var_dump($products->fetch_object()->id_product);
+//            die();
+            
+            // Sacar order's products            
+            $count = 0;
+            $products_a = array();
+            while ($pro = $products->fetch_object() /*&& $products->num_rows > $count*/):
+                $product = new Product();
+                               
+                $product->setId($pro->id_product);
+//                var_dump($product->getId());
+//                die();
+                $product = $product->getProductByOrderLines();
+                $products_a[$count] = $product;
+                $count++;
+                
+            endwhile;
+            
+//            var_dump($product_a[0]->fetch_object());
+//            die();    
+            
             require_once 'views/order/detail.php';
         } else {
             header('Location:' . base_url . 'order/myOrders');
