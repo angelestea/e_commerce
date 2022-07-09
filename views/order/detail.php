@@ -19,11 +19,20 @@
         </form></br>
     <?php endif; ?>
 
+        
+    <h3>User:</h3>
+
+    <pre>
+        Name:<?=$user->name?></br>
+        Last:<?=$user->last_name?></br>
+        Email:<?=$user->email?></br>
+    </pre>    
+        
     <h3>Must be sended:</h3></br>
 
     <pre>
-        rovince: <?= $order->province ?> </br>
-        location: <?= $order->location ?> </br>
+        Province: <?= $order->province ?> </br>
+        Location: <?= $order->location ?> </br>
         Address: <?= $order->address ?> </br>
     </pre>        
 

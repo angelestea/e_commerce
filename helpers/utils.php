@@ -76,6 +76,19 @@ class Utils {
         return $value;
     }
     
+    public static function searchIdOrderByUser($id_user){
+        
+        $db = Database::connect();
+        $sql = "SELECT id FROM orders WHERE id_user={$id_user} ORDER BY id DESC LIMIT 1";
+                  
+        $data = $db->query($sql);
+        
+        if($data){
+            return $data;
+        } 
+        
+    }
+    
     public static function showDataBase($id_user){
         $db = Database::connect();
         $sql = "SELECT * FROM cars WHERE id_user={$id_user}";

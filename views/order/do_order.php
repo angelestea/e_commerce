@@ -26,7 +26,6 @@
             <input type='text' name='address' required>
 
             <input class='button button__small' type='submit'>
-
         </form>
     </div>
 

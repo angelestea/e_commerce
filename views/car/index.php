@@ -3,7 +3,6 @@
 <table>
 
     <tr>
-        <?php //var_dump($dataValue->num_rows); ?>
         <?php if (isset($_SESSION['car']) || isset($dataValue)): ?>
             <th>Get out of car</th>
         <?php endif; ?>
@@ -97,6 +96,14 @@
             $totalUnities += (int) $product->unities;
             $id_product = (int) $product->id_product;
 
+            $db = Database::connect();
+            
+            $consult = "SELECT stock FROM products WHERE id={$product->id_product}";
+            
+            $consult = $db->query($consult)->fetch_object()->stock;
+            
+            $stock = (int)$consult;
+            
             ?>
 
             <tr>
@@ -123,8 +130,10 @@
                 <td>
                     <?= $product->unities ?>
                     <div class='operators_container'>
+                        <?php if($product->unities < $stock):?>
                         <a href='<?= base_url ?>car/up&id_product=<?= $product->id_product ?>&data=<?= true ?>&product_name=<?= $product->name ?>&product_unities=<?= $product->unities ?>&product_price=<?= $product->price ?>&image=<?=$product->image?>' class='up__down'>+</a>
-                        <?php if ($product->unities > 1): ?>
+                        <?php endif; ?>
+                            <?php if ($product->unities > 1): ?>
                             <a href='<?= base_url ?>car/down&id_product=<?= $product->id_product ?>&data=<?= true ?>&product_name=<?= $product->name ?>&product_unities=<?= $product->unities ?>&product_price=<?= $product->price ?>&image=<?=$product->image?>' class='up__down'>-</a>
                         <?php elseif ($product->unities == 1): ?>
                             <a href="<?= base_url ?>car/remove&index=<?= $product->id_product ?>" class='up__down'>-</a>
@@ -251,13 +260,40 @@
 
     $status = Utils::carStatus();
     ?>
-
+    
     <a href="<?= base_url ?>order/make" class="button order__button ">Order</a>
     <a href="<?= base_url ?>car/delete__all" class="button order__button button__red">Voiding car</a>
 
-<?php elseif (isset($dataValue) && $dataValue->num_rows >= 1): ?>
-
-    <a href="<?= base_url ?>order/make&data=<?=true?>&totalPrice=<?=$totalPrice?>" class="button order__button ">Order</a>
-    <a href="<?= base_url ?>car/delete__all" class="button order__button button__red">Voiding car</a>
+<?php elseif (isset($dataValue) && $dataValue->num_rows >= 1):
+    
+    $db = Database::connect();
+    
+    $consult = "SELECT stock FROM products";
+    
+    //echo $consult;
+    
+    $consult = $db->query($consult)/*->fetch_object()->unities*/;
+    
+    $outOfStock = 0;
+    
+    while($pro = $consult->fetch_object()):
+        
+        if($pro->stock == 0):
+            $outOfStock++; 
+        endif;
+        
+    endwhile;
+    
+//    var_dump($consult);
+//    die();
+    
+    
+    ?>
+    <?php if($outOfStock == 0): ?>
+        <a href="<?= base_url ?>order/make&data=<?=true?>&totalPrice=<?=$totalPrice?>" class="button order__button ">Order</a>
+        <a href="<?= base_url ?>car/delete__all" class="button order__button button__red">Voiding car</a>
+    <?php else: ?>
+        <a href="<?= base_url ?>car/delete__all" class="button order__button button__red">You should to void this car</a>
+    <?php endif; ?>
 
 <?php endif; ?>

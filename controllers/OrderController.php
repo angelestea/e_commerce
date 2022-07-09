@@ -212,7 +212,41 @@ class OrderController {
 //                die();                
 //                
 //                $delete_garbage = $order->delete_garbage($state,date(),time());
-                                
+                
+                $getIdOrder = Utils::searchIdOrderByUser($id_user)->fetch_object()->id;
+                
+                
+                //var_dump($getIdOrder);
+                
+                $order_line = "SELECT id_product, unities FROM order_lines WHERE id_order={$getIdOrder}";
+                
+//                echo $order_line;
+//                die();
+                
+                $db = Database::connect();
+                
+                $products_ol = $db->query($order_line);
+                
+                
+                
+                while($p_ol = $products_ol->fetch_object()):
+                    
+                    $product = $p_ol->id_product; 
+                    $unities = $p_ol->unities;
+                    
+                    $actual_unities = "SELECT stock FROM products WHERE id={$product}";
+                    
+                    $actual_unities = (int)$db->query($actual_unities)->fetch_object()->stock;
+                    
+                    $actual_unities = $actual_unities - $unities;
+                    
+                    $alter_unities = "UPDATE products SET stock={$actual_unities} WHERE id={$product}";
+                    $db->query($alter_unities);
+                                        
+                endwhile;
+                
+                
+                
                 if ($save && $save_line) {
                     $_SESSION['order'] = "completed";
                 } else {
@@ -309,6 +343,17 @@ class OrderController {
                 $count++;
                 
             endwhile;
+            
+            $user = $order->id_user;
+            
+            $db = Database::connect();
+            
+            $search_user = "SELECT * FROM users WHERE id={$user}";
+            
+            $user = $db->query($search_user)->fetch_object();
+            
+//            var_dump($user);
+//            die();            
             
 //            var_dump($product_a[0]->fetch_object());
 //            die();    

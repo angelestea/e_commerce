@@ -8,6 +8,7 @@
 
 <?php while ($pro = $products->fetch_object()): ?>
     <?php //$pro = $proShow ?>
+    <?php if($pro->stock > 0): ?>
     <div class="product">
         <a href="<?=base_url?>product/see&id=<?=$pro->id?>">
         <?php if ($pro->image != null): ?>
@@ -40,4 +41,6 @@
                 <a href="<?=base_url?>car/add&id=<?=$pro->id?>" class="button">Buy</a>
             <?php endif;?>
     </div>
+    <?php endif; ?>    
+
 <?php endwhile; ?>
