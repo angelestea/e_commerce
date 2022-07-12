@@ -24,7 +24,7 @@
 
     <pre>
         Name:<?=$user->name?></br>
-        Last:<?=$user->last_name?></br>
+        Lastname:<?=$user->last_name?></br>
         Email:<?=$user->email?></br>
     </pre>    
         

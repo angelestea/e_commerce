@@ -9,31 +9,31 @@ class CarController {
         Utils::isLogin();
         $id_user = $_SESSION['identity']->id;
         $dataValue = Utils::showDataBase($id_user);
-        if (isset($_SESSION['car']) && count($_SESSION['car']) >= 1){
-            
-            //var_dump($_SESSION['car']);
-            $car = $_SESSION['car'];         
+        if (isset($_SESSION['car']) && count($_SESSION['car']) >= 1) {
 
-            if($dataValue){
+            //var_dump($_SESSION['car']);
+            $car = $_SESSION['car'];
+
+            if ($dataValue) {
 //                echo "Ok!";
 //                die();
                 $dataValue = $this->pre__order();
-                require_once 'views/car/index.php';         
-            }           
+                require_once 'views/car/index.php';
+            }
             require_once 'views/car/index.php';
-        }else{
+        } else {
             require_once 'views/car/index.php';
         }
     }
 
     public function add() {
-        
+
         if (isset($_GET['id'])) {
             $id_product = $_GET['id'];
         } else {
             header("Location: " . base_url);
         }
-        
+
 
         if (isset($_SESSION['car'])) {
 
@@ -41,9 +41,9 @@ class CarController {
 
             foreach ($_SESSION['car'] as $index => $element) {
                 if ($element['id_product'] == $id_product) {
-                    $_SESSION['car'][$index]['unities']++;
+                    $_SESSION['car'][$index]['unities'] ++;
                     $counter++;
-                    
+
                     $car = new Car();
                     $car->setId_user($_SESSION['identity']->id);
                     $car->setId_product($id_product);
@@ -51,13 +51,13 @@ class CarController {
                     $car->setName($element['product']->name);
                     $car->setPrice($_SESSION['car'][$index]['price']);
                     $car->setUnities($_SESSION['car'][$index]['unities']);
-                    
+
                     $sum = $car->delete__or__add__one__unit();
                 }
             }
         }
 
-        if (!isset($counter) || $counter == 0 ) {
+        if (!isset($counter) || $counter == 0) {
             //Get product
             $product = new Product();
             $product->setId($id_product);
@@ -81,21 +81,20 @@ class CarController {
     }
 
     public function remove() {
-        
-        
+
+
         if (isset($_GET['index'])) {
             $index = $_GET['index'];
             unset($_SESSION['car'][$index]);
-            
+
             $db = Database::connect();
             $sql = "DELETE FROM cars WHERE id_product={$index} AND id_user={$_SESSION['identity']->id};";
             echo $sql;
             $delete_product = $db->query($sql);
-            
+
             var_dump($delete_product);
-            
         }//elseif(isset($_SESSION['car']) && count($_SESSION['car']) == 0){
-            //$this->delete__all();
+        //$this->delete__all();
         //}//else {
 //            $db = Database::connect();
 //            $sql = "SELECT unities FROM cars WHERE id_product={$_GET['index']};";
@@ -135,10 +134,10 @@ class CarController {
     }
 
     public function up() {
-        if (isset($_GET['index']) && !isset($_GET['data']) ) {
-            
+        if (isset($_GET['index']) && !isset($_GET['data'])) {
+
             $index = $_GET['index'];
-            $_SESSION['car'][$index]['unities']++;
+            $_SESSION['car'][$index]['unities'] ++;
 
             $car = new Car();
             $id_user = $_SESSION['identity']->id;
@@ -156,38 +155,40 @@ class CarController {
             //var_dump($car->getUnities());
             $sum = $car->delete__or__add__one__unit();
             //$save = $car->pre__order();
-        }else{
-           
+        } else {
+
             //var_dump($_GET['data']);
             //die();
-            
-            $id_user = $_SESSION['identity']->id;
-            $id_product = $_GET['id_product'];
-            $product_name = $_GET['product_name'];
-            $product_price = (float)$_GET['product_price'];
-            $product_unities = $_GET['product_unities']+1;
+            if (isset($_SESSION['identity'])):
+                $id_user = $_SESSION['identity']->id;
+                $id_product = $_GET['id_product'];
+                $product_name = $_GET['product_name'];
+                $product_price = (float) $_GET['product_price'];
+                $product_unities = $_GET['product_unities'] + 1;
 
-//            var_dump($product_price);
-//            die();
-            
-            //var_dump($product_unities);
-            $car = new Car();
-            $car->setId_user($id_user);
-            $car->setId_product($id_product);
-            $car->setName($product_name);
-            $car->setPrice($product_price);
-            $car->setUnities($product_unities);
-            
-            if(isset($_GET['image'])){
-                $image = $_GET['image'];
-                $car->setImage($image);
-            }
-            
-                        
-            //var_dump($car->getUnities());
-            $sum = $car->delete__or__add__one__unit();
-//            var_dump($sum);
+                //            var_dump($product_price);
+                //            die();
+                //var_dump($product_unities);
+                $car = new Car();
+                $car->setId_user($id_user);
+                $car->setId_product($id_product);
+                $car->setName($product_name);
+                $car->setPrice($product_price);
+                $car->setUnities($product_unities);
+
+                if (isset($_GET['image'])) {
+                    $image = $_GET['image'];
+                    $car->setImage($image);
+                }
+
+
+                //var_dump($car->getUnities());
+                $sum = $car->delete__or__add__one__unit();
+            //            var_dump($sum);
             //die();
+            else:
+                header("Location:" . base_url . "car/index");
+            endif;
         }
         header("Location:" . base_url . "car/index");
     }
@@ -195,7 +196,7 @@ class CarController {
     public function down() {
         if (isset($_GET['index']) && !isset($_GET['data'])) {
             $index = $_GET['index'];
-            $_SESSION['car'][$index]['unities']--;
+            $_SESSION['car'][$index]['unities'] --;
 
             $car = new Car();
             $id_user = $_SESSION['identity']->id;
@@ -218,19 +219,18 @@ class CarController {
 //                $delete__all = $car->delete__pre__order();
                 unset($_SESSION['car'][$index]);
             }
-        }else{
+        } else {
 //            echo "Ok!";
 //            die();
             $id_user = $_SESSION['identity']->id;
             $id_product = $_GET['id_product'];
             $product_name = $_GET['product_name'];
-            $product_price = (float)$_GET['product_price'];
-            $product_unities = $_GET['product_unities']-1;
+            $product_price = (float) $_GET['product_price'];
+            $product_unities = $_GET['product_unities'] - 1;
             $product_image = $_GET['image'];
 
 //            var_dump($product_price);
 //            die();
-            
             //var_dump($product_unities);
             $car = new Car();
             $car->setId_user($id_user);
@@ -261,7 +261,7 @@ class CarController {
                 $product_name = $element['product']->name;
                 $product_price = number_format($element['product']->price);
                 $product_unities = $element['unities'];
-                $count = $count+1;
+                $count = $count + 1;
                 //var_dump($product_unities);
 
                 $car->setId_user($id_user);
@@ -274,28 +274,26 @@ class CarController {
                 //var_dump($car->getUnities());
 
                 $save = $car->pre__order();
-                
+
                 var_dump($save);
                 //die();
-                
             }
             unset($_SESSION['car']);
             //var_dump($count);
             //die();
-            
-            if(!isset($_SESSION['car'])){
-                
+
+            if (!isset($_SESSION['car'])) {
+
                 $car = new Car();
                 $car->setId_user($_SESSION['identity']->id);
-                
+
                 $orders = $car->get__order();
                 return $orders;
                 var_dump($orders);
                 //echo "Hi ";
                 //die();
             }
-            
-        }else{
+        } else {
             echo "Ok!";
             die();
         }

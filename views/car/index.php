@@ -3,14 +3,19 @@
 <table>
 
     <tr>
-        <?php if (isset($_SESSION['car']) || isset($dataValue)): ?>
+        <?php if (isset($_SESSION['car'])) : ?>
+            <th>Get out of car</th>
+        <?php elseif(isset($dataValue) && $dataValue->num_rows > 0):?>
             <th>Get out of car</th>
         <?php endif; ?>
         <th>Image</th>
         <th>Name</th>
         <th>Price</th>
-        <th>Unities</th>
-
+        <?php if (isset($_SESSION['car'])) : ?>
+            <th>Unities</th>
+        <?php elseif(isset($dataValue) && $dataValue->num_rows > 0):?>
+            <th>Unities</th>
+        <?php endif; ?>
     </tr>
 
     <?php if (isset($_SESSION['car']) && count($_SESSION['car']) >= 1 && !isset($dataValue)): ?>
@@ -58,12 +63,22 @@
 
         <?php endforeach; ?>
         <tr>
+            
+            <?php if (isset($_SESSION['car'])) : ?>
             <td>
                 Total
             </td>
             <td>
 
             </td>
+        <?php elseif(isset($dataValue) && $dataValue->num_rows > 0):?>
+            <td>
+                Total
+            </td>
+            <td>
+
+            </td>
+        <?php endif; ?>
             <td>
                 Diferent products: <?= $count ?>
             </td>
@@ -144,12 +159,22 @@
 
         <?php endwhile; ?>
         <tr>
+            
+            <?php if (isset($_SESSION['car'])) : ?>
             <td>
                 Total
             </td>
             <td>
 
             </td>
+        <?php elseif(isset($dataValue) && $dataValue->num_rows > 0):?>
+            <td>
+                Total
+            </td>
+            <td>
+
+            </td>
+        <?php endif; ?>
             <td>
                 Diferent products: <?= $count ?>
             </td>
@@ -164,7 +189,7 @@
 
 
     <?php elseif (isset($_SESSION['car']) && count($_SESSION['car']) >= 1 && isset($dataValue)): ?>
-        <?php echo "Ok 2!" ?>
+        <?php //echo "Ok 2!" ?>
         <?php
         $count = 0;
         $totalPrice = 0;
@@ -234,7 +259,7 @@
         </tr>
 
     <?php else: ?>
-        <?php echo "Ok!"; ?>
+        <?php //echo "Ok!"; ?>
         <tr>
             <td>
                 Total
@@ -268,23 +293,34 @@
     
     $db = Database::connect();
     
-    $consult = "SELECT stock FROM products";
+    $allCar = "SELECT * FROM cars c INNER JOIN products p ON p.id = c.id_product WHERE id_user={$_SESSION['identity']->id};";
+   
+//    echo $allCar;
+//    
+//    die();
     
-    //echo $consult;
+    $consult = $db->query($allCar)/*->fetch_object()->unities*/;
     
-    $consult = $db->query($consult)/*->fetch_object()->unities*/;
+    
     
     $outOfStock = 0;
+    
+//    var_dump($consult->fetch_object());
+//    
+//    var_dump($consult->fetch_object());
+//    
+//    die();
     
     while($pro = $consult->fetch_object()):
         
         if($pro->stock == 0):
+            var_dump($pro);
             $outOfStock++; 
         endif;
         
     endwhile;
     
-//    var_dump($consult);
+//    var_dump($outOfStock);
 //    die();
     
     
