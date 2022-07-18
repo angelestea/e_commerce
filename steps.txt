@@ -1,0 +1,11 @@
+Steps of use:
+
+1. Create database
+2. Change the name of this folder of e_commerce-main to e_commerce
+3. Verify the root of the folder must be in c:wamp64/www or the main root of your local host
+4. Change the port of the local host that you will user to :8080.
+4. Enjoy the program!
+
+Tips:
+
+If you want to change the user of that has been registered, change it of the database directly
